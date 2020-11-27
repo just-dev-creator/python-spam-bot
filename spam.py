@@ -3,7 +3,7 @@ from email.mime.text import MIMEText
 from time import sleep
 from random import randint
 
-login = open("login.txt", "r").read().split() # Other file containing login details
+login = open("login.txt", "r").read().split(',') # Other file containing login details
 username = login[0]
 password = login[1]
 
@@ -14,26 +14,26 @@ def start_server():
     server.login(username, password)
     return server
 
-def send_emails(server):
-    emails = "".join(open("victims.txt", "r").read().split()) # File containing victims email addresses
-    for email in range(100):
-        print(email) # Just to see how many emails are being sent
-        msg = MIMEText("Spam")
-        msg['Subject'] = 'Spam ' + str(randint(0, 1000000)) # Adding a random number to prevent the subjects being the same
-        msg['From'] = username
-        msg['To'] = emails
-        server.sendmail(username, emails, msg.as_string())
+def send_emails(server, target):
+    msg = MIMEText("Hello this is just a test message")
+    msg['Subject'] = 'Hello ' + str(randint(0, 1000000)) # Adding a random number to prevent the subjects being the same
+    msg['From'] = username
+    msg['To'] = target
+    print(msg)
+    server.sendmail(username, target, msg.as_string())
+    print('sended the mail')
 
-def main():
+def main(target):
     while True:
         server = start_server()
         try:
-            send_emails(server)
+            print('Started sending emails')
+            send_emails(server, target)
         except Exception as e:
             sleep(60) # To bypass gmails auto timeout system
 
 if __name__ == "__main__":
     try:
-        main()
+        main('targetmail@targetprovider.de')
     except KeyboardInterrupt:
         print("Interrupted program. Exitting...")
